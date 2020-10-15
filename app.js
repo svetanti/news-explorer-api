@@ -2,12 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const { errors } = require('celebrate');
 const user = require('./routes/user');
 const articles = require('./routes/articles');
 const NotFoundError = require('./errors/NotFoundError');
 const { validateUser, validateLogin } = require('./middlewares/requestValidation');
 const auth = require('./middlewares/auth');
 const { createUser, login } = require('./controllres/user');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 require('dotenv').config();
 
@@ -26,11 +28,17 @@ mongoose.connect('mongodb://localhost:27017/newsdb', {
   useUnifiedTopology: true,
 });
 
+app.use(requestLogger);
+
 app.post('/signup', validateUser, createUser);
 app.post('/signin', validateLogin, login);
 
 app.use('/', auth, user);
 app.use('/', auth, articles);
+
+app.use(errorLogger);
+
+app.use(errors());
 
 app.use(() => {
   throw new NotFoundError({ message: 'Запрашиваемый ресурс не найден' });
