@@ -10,10 +10,7 @@ const { validateUser, validateLogin } = require('./middlewares/requestValidation
 const auth = require('./middlewares/auth');
 const { createUser, login } = require('./controllres/user');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
-
-require('dotenv').config();
-
-const { PORT = 3000 } = process.env;
+const { PORT, DB_ADDRESS } = require('./config');
 
 const app = express();
 
@@ -21,7 +18,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-mongoose.connect('mongodb://localhost:27017/newsdb', {
+mongoose.connect(DB_ADDRESS, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useFindAndModify: false,

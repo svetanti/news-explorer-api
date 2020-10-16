@@ -3,8 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
-
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { JWT_SECRET } = require('../config');
 
 module.exports.createUser = (req, res, next) => {
   const { email, password, name } = req.body;
@@ -32,7 +31,7 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
+        JWT_SECRET,
         { expiresIn: '7d' },
       );
       res
@@ -41,6 +40,7 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
+        .status(200)
         .send({ message: 'Успешная авторизация' });
     })
     .catch(next);
@@ -52,6 +52,6 @@ module.exports.getUser = (req, res, next) => {
     .catch(() => {
       throw new NotFoundError({ message: 'Нет пользователя с таким id' });
     })
-    .then((user) => res.send({ data: { email: user.email, name: user.name } }))
+    .then((user) => res.status(200).send({ data: { email: user.email, name: user.name } }))
     .catch(next);
 };
