@@ -2,7 +2,6 @@ const Article = require('../models/article');
 const BadRequestError = require('../errors/BadRequestError');
 const InternalServerError = require('../errors/InternalServerError');
 const NotFoundError = require('../errors/NotFoundError');
-const ForbiddenError = require('../errors/ForbiddenError');
 
 module.exports.getArticles = (req, res, next) => {
   Article.find({})
@@ -18,11 +17,11 @@ module.exports.createArticle = (req, res, next) => {
   const {
     keyword, title, text, date, source, link, image,
   } = req.body;
+  const owner = req.user._id;
 
   Article.create({
-    keyword, title, text, date, source, link, image, owner: req.user._id,
+    keyword, title, text, date, source, link, image, owner,
   })
-    .populate('user')
     .catch((err) => {
       throw new BadRequestError({ message: `Указаны некорректные данные при создании карточки: ${err.message}` });
     })
@@ -31,20 +30,13 @@ module.exports.createArticle = (req, res, next) => {
 };
 
 module.exports.deleteArticle = (req, res, next) => {
-  Article.findById(req.params._id)
+  Article.findByIdAndDelete(req.params._id)
     .orFail()
     .catch(() => {
       throw new NotFoundError({ message: 'Нет статьи с таким id' });
     })
-    .then((article) => {
-      if (article.owner.toString() !== req.user._id) {
-        throw new ForbiddenError({ message: 'Недостаточно прав для выполнения операции' });
-      }
-      Article.findByIdAndDelete(req.params._id)
-        .then((articleData) => {
-          res.send({ data: articleData });
-        })
-        .catch(next);
+    .then((articleData) => {
+      res.send({ data: articleData });
     })
     .catch(next);
 };

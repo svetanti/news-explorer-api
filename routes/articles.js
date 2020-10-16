@@ -4,6 +4,6 @@ const { validateId, validateArticle } = require('../middlewares/requestValidatio
 
 articles.get('/articles', getArticles);
 articles.post('/articles', validateArticle, createArticle);
-articles.delete('/articles/:articleId', validateId, deleteArticle);
+articles.delete('/articles/:_id', validateId, deleteArticle);
 
 module.exports = articles;
