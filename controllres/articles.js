@@ -30,7 +30,17 @@ module.exports.createArticle = (req, res, next) => {
     .catch((err) => {
       throw new BadRequestError({ message: `${BAD_REQUEST} ${err.message}` });
     })
-    .then((article) => res.status(201).send({ data: article }))
+    .then((article) => res.status(201).send({
+      data: {
+        keyword: article.keyword,
+        title: article.title,
+        text: article.text,
+        date: article.date,
+        source: article.source,
+        link: article.link,
+        image: article.image,
+      },
+    }))
     .catch(next);
 };
 
