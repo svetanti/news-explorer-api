@@ -2,13 +2,18 @@ const Article = require('../models/article');
 const BadRequestError = require('../errors/BadRequestError');
 const InternalServerError = require('../errors/InternalServerError');
 const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
+const {
+  BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND,
+} = require('../constants');
 
 module.exports.getArticles = (req, res, next) => {
-  Article.find({})
+  const owner = req.user._id;
+  Article.find({ owner })
     .populate('user')
     .then((articles) => res.status(200).send({ data: articles }))
     .catch((err) => {
-      throw new InternalServerError({ message: `На сервере произошла ошибка: ${err.message}` });
+      throw new InternalServerError({ message: `${INTERNAL_SERVER_ERROR} ${err.message}` });
     })
     .catch(next);
 };
@@ -23,20 +28,31 @@ module.exports.createArticle = (req, res, next) => {
     keyword, title, text, date, source, link, image, owner,
   })
     .catch((err) => {
-      throw new BadRequestError({ message: `Указаны некорректные данные при создании карточки: ${err.message}` });
+      throw new BadRequestError({ message: `${BAD_REQUEST} ${err.message}` });
     })
     .then((article) => res.status(201).send({ data: article }))
     .catch(next);
 };
 
 module.exports.deleteArticle = (req, res, next) => {
-  Article.findByIdAndDelete(req.params._id)
+  const owner = req.user._id;
+  const id = req.params._id;
+  Article.findById(id, {
+    keyword: 1, title: 1, text: 1, date: 1, source: 1, link: 1, image: 1, owner: 1,
+  })
     .orFail()
     .catch(() => {
-      throw new NotFoundError({ message: 'Нет статьи с таким id' });
+      throw new NotFoundError({ message: NOT_FOUND });
     })
-    .then((articleData) => {
-      res.send({ data: articleData });
+    .then((article) => {
+      if (article.owner.toString() !== owner) {
+        throw new ForbiddenError({ message: FORBIDDEN });
+      }
+      Article.findByIdAndDelete(id)
+        .then((deletedArticle) => {
+          res.status(200).send({ data: deletedArticle });
+        })
+        .catch(next);
     })
     .catch(next);
 };

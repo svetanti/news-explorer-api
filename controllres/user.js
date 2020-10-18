@@ -4,6 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const { JWT_SECRET } = require('../config');
+const { CONFLICT, NOT_FOUND, SUCCESS } = require('../constants');
 
 module.exports.createUser = (req, res, next) => {
   const { email, password, name } = req.body;
@@ -14,7 +15,7 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'MongoError' || err.code === 11000) {
-        throw new ConflictError({ message: 'Пользователь с таким email уже зарегистрирован' });
+        throw new ConflictError({ message: CONFLICT });
       } else next(err);
     })
     .then((user) => res.status(201).send({
@@ -41,7 +42,7 @@ module.exports.login = (req, res, next) => {
           sameSite: true,
         })
         .status(200)
-        .send({ message: 'Успешная авторизация' });
+        .send({ message: SUCCESS });
     })
     .catch(next);
 };
@@ -50,7 +51,7 @@ module.exports.getUser = (req, res, next) => {
   User.findById(req.user._id)
     .orFail()
     .catch(() => {
-      throw new NotFoundError({ message: 'Нет пользователя с таким id' });
+      throw new NotFoundError({ message: NOT_FOUND });
     })
     .then((user) => res.status(200).send({ data: { email: user.email, name: user.name } }))
     .catch(next);
