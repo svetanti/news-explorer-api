@@ -4,14 +4,14 @@ const InternalServerError = require('../errors/InternalServerError');
 const NotFoundError = require('../errors/NotFoundError');
 const ForbiddenError = require('../errors/ForbiddenError');
 const {
-  BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, NOT_FOUND,
+  BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR, ARTICLE_NOT_FOUND,
 } = require('../constants');
 
 module.exports.getArticles = (req, res, next) => {
   const owner = req.user._id;
   Article.find({ owner })
     .populate('user')
-    .then((articles) => res.status(200).send({ data: articles }))
+    .then((articles) => res.send({ data: articles }))
     .catch((err) => {
       throw new InternalServerError({ message: `${INTERNAL_SERVER_ERROR} ${err.message}` });
     })
@@ -52,7 +52,7 @@ module.exports.deleteArticle = (req, res, next) => {
   })
     .orFail()
     .catch(() => {
-      throw new NotFoundError({ message: NOT_FOUND });
+      throw new NotFoundError({ message: ARTICLE_NOT_FOUND });
     })
     .then((article) => {
       if (article.owner.toString() !== owner) {
@@ -60,7 +60,7 @@ module.exports.deleteArticle = (req, res, next) => {
       }
       Article.findByIdAndDelete(id)
         .then((deletedArticle) => {
-          res.status(200).send({ data: deletedArticle });
+          res.send({ data: deletedArticle });
         })
         .catch(next);
     })

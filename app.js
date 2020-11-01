@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -12,8 +13,14 @@ const { PORT, DB_ADDRESS } = require('./config');
 
 const app = express();
 
+const corsOptions = {
+  origin: ['http://localhost:3000', 'https://localhost:3000', 'https://svetanti.github.io/news-explorer-frontend/'],
+  credentials: true,
+};
+
 app.use(helmet());
 app.use(cookieParser());
+app.use(cors(corsOptions));
 
 app.use(limiter);
 app.use(bodyParser.json());

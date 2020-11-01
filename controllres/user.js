@@ -41,7 +41,6 @@ module.exports.login = (req, res, next) => {
           httpOnly: true,
           sameSite: true,
         })
-        .status(200)
         .send({ message: SUCCESS });
     })
     .catch(next);
@@ -53,6 +52,6 @@ module.exports.getUser = (req, res, next) => {
     .catch(() => {
       throw new NotFoundError({ message: NOT_FOUND });
     })
-    .then((user) => res.status(200).send({ data: { email: user.email, name: user.name } }))
+    .then((user) => res.send({ data: { email: user.email, name: user.name } }))
     .catch(next);
 };
