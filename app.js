@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const cors = require('cors');
 const { errors } = require('celebrate');
 const helmet = require('helmet');
 const router = require('./routes');
@@ -19,9 +18,6 @@ app.use(cookieParser());
 app.use(limiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.options('*', cors());
-app.use(cors());
 
 mongoose.connect(DB_ADDRESS, {
   useNewUrlParser: true,
