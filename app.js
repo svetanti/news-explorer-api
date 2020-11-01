@@ -12,11 +12,9 @@ const errorHandler = require('./middlewares/errorHandler');
 const { PORT, DB_ADDRESS } = require('./config');
 
 const corsOptions = {
-  origin: '*',
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  origin: true,
   credentials: true,
-  preflightContinue: true,
-  maxAge: 600,
+  optionsSuccessStatus: 200,
 };
 
 const app = express();
