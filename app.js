@@ -15,8 +15,8 @@ const app = express();
 
 app.use(helmet());
 app.use(cookieParser());
-app.use(cors());
-app.options('*', cors());
+app.use(cors({ credentials: true }));
+app.options('*', cors({ credentials: true }));
 
 app.use(limiter);
 app.use(bodyParser.json());
