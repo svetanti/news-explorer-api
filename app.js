@@ -13,17 +13,10 @@ const { PORT, DB_ADDRESS } = require('./config');
 
 const app = express();
 
-const corsOptions = {
-  origin: ['http://localhost:3000', 'https://localhost:3000'],
-  preflightContinue: false,
-  optionsSuccessStatus: 200,
-  credentials: true,
-};
-
 app.use(helmet());
 app.use(cookieParser());
 app.use(cors());
-app.options('*', cors(corsOptions));
+app.options('*', cors());
 
 app.use(limiter);
 app.use(bodyParser.json());
