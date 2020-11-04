@@ -35,7 +35,7 @@ module.exports.login = (req, res, next) => {
         JWT_SECRET,
         { expiresIn: '7d' },
       );
-      res.send(token);
+      res.send({ token });
     })
     .catch(next);
 };
