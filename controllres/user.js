@@ -4,7 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const ConflictError = require('../errors/ConflictError');
 const { JWT_SECRET } = require('../config');
-const { CONFLICT, NOT_FOUND, SUCCESS } = require('../constants');
+const { CONFLICT, NOT_FOUND } = require('../constants');
 
 module.exports.createUser = (req, res, next) => {
   const { email, password, name } = req.body;
