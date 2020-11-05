@@ -10,11 +10,11 @@ const articleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  text: {
+  description: {
     type: String,
     required: true,
   },
-  date: {
+  publishedAt: {
     type: String,
     required: true,
   },
@@ -22,22 +22,22 @@ const articleSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  link: {
+  url: {
     type: String,
     required: true,
     validate: {
-      validator(link) {
-        return validator.isURL(link);
+      validator(url) {
+        return validator.isURL(url);
       },
       message: 'Введён некорректный URL',
     },
   },
-  image: {
+  urlToImage: {
     type: String,
     required: true,
     validate: {
-      validator(image) {
-        return validator.isURL(image);
+      validator(urlToImage) {
+        return validator.isURL(urlToImage);
       },
       message: 'Введён некорректный URL',
     },

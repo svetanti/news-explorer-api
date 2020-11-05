@@ -20,12 +20,12 @@ module.exports.getArticles = (req, res, next) => {
 
 module.exports.createArticle = (req, res, next) => {
   const {
-    keyword, title, text, date, source, link, image,
+    keyword, title, description, publishedAt, source, url, urlToImage,
   } = req.body;
   const owner = req.user._id;
 
   Article.create({
-    keyword, title, text, date, source, link, image, owner,
+    keyword, title, description, publishedAt, source, url, urlToImage, owner,
   })
     .catch((err) => {
       throw new BadRequestError({ message: `${BAD_REQUEST} ${err.message}` });
@@ -34,11 +34,11 @@ module.exports.createArticle = (req, res, next) => {
       data: {
         keyword: article.keyword,
         title: article.title,
-        text: article.text,
-        date: article.date,
+        description: article.description,
+        publishedAt: article.publishedAt,
         source: article.source,
-        link: article.link,
-        image: article.image,
+        url: article.url,
+        urlToImage: article.urlToImage,
       },
     }))
     .catch(next);
@@ -48,7 +48,14 @@ module.exports.deleteArticle = (req, res, next) => {
   const owner = req.user._id;
   const id = req.params._id;
   Article.findById(id, {
-    keyword: 1, title: 1, text: 1, date: 1, source: 1, link: 1, image: 1, owner: 1,
+    keyword: 1,
+    title: 1,
+    description: 1,
+    publishedAt: 1,
+    source: 1,
+    url: 1,
+    urlToImage: 1,
+    owner: 1,
   })
     .orFail()
     .catch(() => {
