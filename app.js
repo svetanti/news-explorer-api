@@ -17,6 +17,9 @@ const corsOptions = {
   origin: [
     'http://localhost:3000',
     'https://localhost:3000',
+    'http://newnews.students.nomoreparties.xyz',
+    'https://newnews.students.nomoreparties.xyz',
+    'https://svetanti.github.io/news-explorer-frontend/',
   ],
   credentials: true,
 };
